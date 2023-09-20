@@ -1,0 +1,9 @@
+.modal-body .btn {
+  margin: 5px;
+}
+
+.cls-modal-btn {
+  background-color: white !important;
+  border: 1px solid #46139f !important;
+  color: #46139f !important;
+}
