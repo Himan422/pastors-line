@@ -1,8 +1,8 @@
 import React from "react";
-import MainScreen from "./pages/MainScreen";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import ContactsListModal from "./components/ContactsListModal";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./assets/css/index.css";
+import ContactsListModal from "./components/ContactsListModal";
+import MainScreen from "./pages/MainScreen";
 
 function App() {
   return (
