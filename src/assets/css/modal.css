@@ -7,3 +7,15 @@
   border: 1px solid #46139f !important;
   color: #46139f !important;
 }
+
+.modal-body div.container {
+  height: calc(100vh - 270px);
+  overflow-y: auto;
+}
+
+.modal-body .table thead {
+  position: sticky;
+  top: 0px;
+  background: white;
+  outline: 2px solid #dee2e6;
+}
