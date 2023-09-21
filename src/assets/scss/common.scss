@@ -1,0 +1,13 @@
+@import './variables.scss';
+
+.all-contacts-btn {
+  background-color: $primaryColor !important;
+  border: none !important;
+  color: white !important;
+}
+
+.us-contacts-btn {
+  background-color: $secondaryColor !important;
+  border: none !important;
+  color: white !important;
+}
