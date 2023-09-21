@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   Form,
@@ -8,7 +8,7 @@ import {
   Table,
 } from "react-bootstrap";
 import { Scrollbars } from "react-custom-scrollbars";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { getContactData } from "../apis/contactData";
 import ContactDetailedModal from "./ContactDetailedModal";
 
@@ -25,20 +25,7 @@ const ContactsListModal = ({ type }) => {
   const scrollAbleData = useRef(null);
   const history = useHistory();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (contactData.length) {
-      scrollAbleData.current.scrollToTop();
-      setContactUpdatedData(
-        contactData.filter((e) => (onlyEven ? !(e.id % 2) : true))
-      );
-    }
-  }, [contactData, onlyEven]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const data = await getContactData({
       query: searchText,
       page: 1,
@@ -46,7 +33,23 @@ const ContactsListModal = ({ type }) => {
       setLoading,
     });
     setContactData(data.contacts ? Object.values(data.contacts) : []);
-  };
+  }, [searchText, type]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (contactData.length) {
+      setContactUpdatedData(
+        contactData.filter((e) => (onlyEven ? !(e.id % 2) : true))
+      );
+    }
+  }, [contactData, onlyEven]);
+
+  useEffect(() => {
+    scrollAbleData.current.scrollToTop();
+  }, [onlyEven]);
 
   const loadMoreData = async () => {
     const data = await getContactData({
@@ -55,7 +58,6 @@ const ContactsListModal = ({ type }) => {
       countryId: type === "B" ? "226" : "",
       setLoading,
     });
-    console.log("called");
     setPageData(page + 1);
     setContactData((pre) =>
       pre.concat(data.contacts ? Object.values(data.contacts) : [])
@@ -144,18 +146,22 @@ const ContactsListModal = ({ type }) => {
                   <th>Phone Number</th>
                 </tr>
               </thead>
-              <tbody>
-                {contactUpdatedData.map((item) => (
-                  <tr key={item.id} onClick={() => openDetailedModal()}>
-                    <td>{item.id}</td>
-                    <td>{item.first_name}</td>
-                    <td>{item.last_name}</td>
-                    <td>{item.email}</td>
-                    <td>{item.phone_number}</td>
-                  </tr>
+              {!!contactUpdatedData.length &&
+                contactUpdatedData.map((item) => (
+                  <tbody>
+                    <tr key={item.id} onClick={() => openDetailedModal()}>
+                      <td>{item.id}</td>
+                      <td>{item.first_name}</td>
+                      <td>{item.last_name}</td>
+                      <td>{item.email}</td>
+                      <td>{item.phone_number}</td>
+                    </tr>
+                  </tbody>
                 ))}
-              </tbody>
             </Table>
+            {!contactUpdatedData.length && (
+              <div className="no-data-found"><h4>No data found</h4></div>
+            )}
           </Scrollbars>
         </Modal.Body>
         <Modal.Footer>
@@ -167,8 +173,12 @@ const ContactsListModal = ({ type }) => {
             onChange={handleCheckboxChange}
           />
           <div>
-            <Button className="all-contacts-btn">All Contacts</Button>
-            <Button className="us-contacts-btn">US Contacts</Button>
+            <Link className="btn all-contacts-btn" to="/all-contacts-list">
+              All Contacts
+            </Link>
+            <Link className="btn us-contacts-btn" to="/us-contacts-list">
+              US Contacts
+            </Link>
             <Button className="cls-modal-btn" onClick={handleCloseModal}>
               Close
             </Button>
